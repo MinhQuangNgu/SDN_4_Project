@@ -26,6 +26,15 @@ const userModel = new mongoose.Schema({
         ],
         default: []
     },
+    favoriteRecipes: {
+        type:[
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "Recipes"
+            },
+        ],
+        default: []
+    },
     tags:{
         type:[],
         default:[]
