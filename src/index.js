@@ -1,10 +1,10 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const router = require("./routes/index");
+import express from 'express';
+import { config } from 'dotenv';
+import cors from 'cors';
+import router from "./routes/index.js";
 const app = express();
-const mongoose = require("mongoose");
-dotenv.config();
+import { connect } from "mongoose";
+config();
 app.use(express.json());
 
 app.use(
@@ -14,8 +14,7 @@ app.use(
     })
 );
 
-mongoose
-    .connect(process.env.DATABASE_URL, {
+connect(process.env.DATABASE_URL, {
         useNewUrlParser: true,
     })
     .then((res) => {
