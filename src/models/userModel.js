@@ -15,10 +15,11 @@ const userModel = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: true,
+        enum:['admin','user','chief'],
+        default:'user'
     },
     ownerRecipes: {
-        type:[
+        type: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: "recipes"
@@ -27,7 +28,7 @@ const userModel = new mongoose.Schema({
         default: []
     },
     favoriteRecipes: {
-        type:[
+        type: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: "recipes"
@@ -35,8 +36,8 @@ const userModel = new mongoose.Schema({
         ],
         default: []
     },
-    followings:{
-        type:[
+    followings: {
+        type: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: "users"
@@ -44,9 +45,27 @@ const userModel = new mongoose.Schema({
         ],
         default: []
     },
-    tags:{
-        type:[],
-        default:[]
+    followers:{
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "users"
+            },
+        ],
+        default: []
+    },
+    status: {
+        type: String,
+        enum: [
+            "locked",
+            "pending",
+            "opened"
+        ],
+        default: "pending"
+    },
+    tags: {
+        type: [],
+        default: []
     }
 }, {
     timestamps: true,

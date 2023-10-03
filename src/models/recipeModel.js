@@ -1,28 +1,52 @@
 import mongoose from "mongoose";
 
 const recipeModel = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
+    name: {
+        type: String,
+        required: true,
     },
-    introduction:{
-        type:String,
+    introduction: {
+        type: String,
     },
-    recipes:{
-        type:String,
-        required:true
+    recipes: {
+        type: String,
+        required: true
     },
-    owner:{
-        type:mongoose.Types.ObjectId,
-        ref:"users"
+    owner: {
+        type: mongoose.Types.ObjectId,
+        ref: "users"
     },
-    tags:{
-        type:[],
-        default:[]
+    rating: {
+        type: [
+            {
+                id: {
+                    type: mongoose.Types.ObjectId,
+                    ref: "users"
+                },
+                star: {
+                    type: Number,
+                    default: 0
+                }
+            }
+        ],
+        default: []
+    },
+    favorites: {
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "users"
+            }
+        ],
+        default: []
+    },
+    tags: {
+        type: [],
+        default: []
     }
 
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
-export default mongoose.model('recipes',recipeModel);
+export default mongoose.model('recipes', recipeModel);
