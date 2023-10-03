@@ -21,7 +21,7 @@ const userModel = new mongoose.Schema({
         type:[
             {
                 type: mongoose.Types.ObjectId,
-                ref: "Recipes"
+                ref: "recipes"
             },
         ],
         default: []
@@ -30,7 +30,16 @@ const userModel = new mongoose.Schema({
         type:[
             {
                 type: mongoose.Types.ObjectId,
-                ref: "Recipes"
+                ref: "recipes"
+            },
+        ],
+        default: []
+    },
+    followings:{
+        type:[
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "users"
             },
         ],
         default: []
