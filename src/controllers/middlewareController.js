@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import userModel from '../models/userModel.js';
+import User from '../models/userModel.js';
 class MiddlewareController {
     async verifyToken(req, res, next) {
         try {
@@ -32,9 +32,9 @@ class MiddlewareController {
                     if(err){
                         return res.status(400).json({ message: "Authentication failed" });
                     }
-                    const user = await userModel.findById(user.id);
-                    if(user.role === 'admin'){
-                        req.user = user;
+                    const userDb = await User.findById(user.id);
+                    if(userDb.role === 'admin'){
+                        req.user = userDb;
                         return next();
                     }
                     return res.status(400).json({ message: "Authentication failed" });
