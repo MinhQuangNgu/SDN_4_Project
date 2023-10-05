@@ -2,7 +2,7 @@ import UserService from '../repository/UserService.js'
 import userModel from '../models/userModel.js'
 import User from '../models/userModel.js';
 import Recipe from '../models/recipeModel.js';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 class UserController {
     getAll = async (req, res, next) => {
         const user = await UserService.findAll(req, res, next);
@@ -27,8 +27,6 @@ class UserController {
                 status: "failed to create user",
             })
         }
-        console.log("=========================");
-
         if (userCreate.data.statusCode !== 200) {
             return res.status(200).send({
                 data: userCreate.data
