@@ -2,6 +2,9 @@ import UserService from '../repository/UserService.js'
 import userModel from '../models/userModel.js'
 import User from '../models/userModel.js';
 import Recipe from '../models/recipeModel.js';
+import { response } from 'express';
+import { generateAccessToken } from '../authen.js';
+import nodemailer from 'nodemailer';
 // import bcrypt from 'bcrypt';
 class UserController {
     getAll = async (req, res, next) => {
@@ -18,6 +21,58 @@ class UserController {
             user
         })
     }
+
+    forgotPassword = async (req, res, next) => {
+        const { email } = req.body;
+        console.log("change password", req.body);
+        try {
+            const user = await User.findOne({ email: email });
+            console.log(user);
+            if (!user) {
+                return res.send({ status: 400, data: "Not exist user" })
+            }
+            const token = generateAccessToken({ _id: user['_id'], role: user["role"] })
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'suttoantruot13.11.2002@gmail.com',
+                    pass: 'hhif qdwn nnyi jbzb'
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            var mailOptions = {
+                from: 'khanhddq13.11.2002@gmail.com',
+                to: email,
+                subject: 'Reset Your password',
+                
+                html: `<h1>You click link below to change password</h1><a href="http://localhost:3000/change-password/${user['_id']}/${token}">Reset Password</a>`
+            
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    // console.log("day là lỗi");
+                    //   console.log(error);
+                    return res.status(200).json({ success: false, data: "Can not change password" })
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    //   return res.send({status: 'success'});
+                    const data = {
+                        user: user,
+                        token: token
+                    }
+                    return res.status(200).json({ success: true, data: data })
+                }
+            });
+
+
+        } catch (error) {
+            return res.status(400).json({ status: false, error: "Error Occurred" });
+        }
+    }
     postUser = async (req, res, next) => {
 
 
@@ -33,12 +88,12 @@ class UserController {
             });
         }
         return res.status(200).send({
-           data: userCreate.data
+            data: userCreate.data
         });
     }
     deleteUser = async (req, res, next) => {
         await userModel.deleteOne(req.query);
-        return res.send({
+        return res.status(200).json({
             status: "success",
         })
     }
@@ -47,16 +102,16 @@ class UserController {
         try {
             const userUpdate = await UserService.Update(req, res, next);
             if (!userUpdate) {
-                return res.send({
+                return res.status(400).json({
                     status: "failed to Update user",
                 })
             }
             if (userUpdate.data.statusCode !== 201) {
-                return res.status(200).send({
+                return res.status(200).json({
                     data: userUpdate.data
                 });
             }
-            return res.status(201).send({
+            return res.status(201).json({
                 success: true,
             })
         } catch (error) {
@@ -64,6 +119,29 @@ class UserController {
         }
 
     }
+
+    // changePassword = async (req, res, next) => {
+      
+    //     try {
+    //         const userUpdate = await UserService.Change(req, res, next);
+    //         if (!userUpdate) {
+    //             return res.status(400).json({
+    //                 status: "failed to Update user",
+    //             })
+    //         }
+    //         if (userUpdate.data.statusCode !== 201) {
+    //             return res.status(200).json({
+    //                 data: userUpdate.data
+    //             });
+    //         }
+    //         return res.status(201).json({
+    //             success: true,
+    //         })
+    //     } catch (error) {
+
+    //     }
+
+    // }
     CreateToken = async (req, res, next) => {
         const user = await UserService.Login(req, res, next);
         if (user.data.statusCode !== 200) {
@@ -174,14 +252,14 @@ class UserController {
                     $pull: { favoriteRecipes: id }
                 });
                 await Recipe.findByIdAndUpdate(id, {
-                    $pull: { favorites: req.user.id}
+                    $pull: { favorites: req.user.id }
                 });
             } else {
                 await User.findByIdAndUpdate(req.user.id, {
                     $addToSet: { favoriteRecipes: id }
                 });
                 await Recipe.findByIdAndUpdate(id, {
-                    $addToSet: { favorites: req.user.id}
+                    $addToSet: { favorites: req.user.id }
                 });
             }
             const action = isAlreadyFollowing ? "Unfollow" : "Follow";
