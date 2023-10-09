@@ -156,7 +156,7 @@ class UserController {
     async getUserDetail(req, res) {
         try {
             const { id } = req.params;
-            const requestUser = await User.findById(req.user.id);
+            const requestUser = await User.findById(req.user._id);
             let excluded = "-password";
             if (requestUser.role !== 'admin') {
                 excluded += " -role";
@@ -167,12 +167,13 @@ class UserController {
             }).select(excluded);
             return res.status(200).json({
                 user: {
-                    ...user,
-                    owner: req.user.id == id
+                    ...user._doc,
+                    owner: req.user._id == id
                 }
             });
         }
         catch (err) {
+            console.log(err)
             return res.status(500).json({ message: err.toString() });
         }
     }

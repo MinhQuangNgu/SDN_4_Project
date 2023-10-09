@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 function generateAccessToken(username) {
   // tạo access token key = header + payload + secretkey
-  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '60s' });
+  return jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days' });
 };
 
 function authenticateToken(req, res, next) {
@@ -20,7 +20,7 @@ function authenticateToken(req, res, next) {
 
     if (token == null) return res.sendStatus(401)
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, process.env.ACCESS_KEY, (err, user) => {
       console.log(err)
 
       if (err) return res.status(200).json({
