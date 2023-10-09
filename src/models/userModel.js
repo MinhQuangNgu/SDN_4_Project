@@ -64,7 +64,10 @@ const userModel = new mongoose.Schema({
         default: "pending"
     },
     tags: {
-        type: [],
+        type: [{
+            k:String,
+            v:String
+        }],
         default: []
     }
 }, {
