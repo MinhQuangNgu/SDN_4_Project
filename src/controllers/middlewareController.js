@@ -32,12 +32,14 @@ class MiddlewareController {
                     if(err){
                         return res.status(400).json({ message: "Authentication failed" });
                     }
-                    const userDb = await User.findById(user.id);
+                    const userDb = await User.findById(user._id);
                     if(userDb.role === 'admin'){
                         req.user = userDb;
                         return next();
                     }
-                    return res.status(400).json({ message: "Authentication failed" });
+                    else{
+                        return res.status(400).json({ message: "Authentication failed" });
+                    }
                 });
             }
             else {
