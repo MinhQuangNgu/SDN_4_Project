@@ -1,4 +1,5 @@
 import express from "express";
+import passport from 'passport'
 import userController from "../controllers/userController.js";
 import middlewareController from "../controllers/middlewareController.js";
 const userRouter = express.Router();
@@ -7,9 +8,9 @@ import UserController from '../controllers/userController.js'
 userRouter.get('/', UserController.getAll);
 userRouter.get('/:id', UserController.getUserID);
 userRouter.post('/forgot-password', UserController.forgotPassword);
-// userRouter.put('/change-password', UserController.changePassword);
 userRouter.post('/register', UserController.postUser );
 userRouter.post('/login', UserController.CreateToken);
+
 userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
 

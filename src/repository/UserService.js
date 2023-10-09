@@ -1,7 +1,7 @@
 
 import userModel from "../models/userModel.js";
-import { generateAccessToken } from "../authen.js";
-
+import { generateAccessToken, googleAuthen } from "../authen.js";
+import passport from 'passport'
 
 class RecipeController {
 
@@ -147,6 +147,10 @@ class RecipeController {
             return err;
         }
 
+    }
+
+    CreateGoogle = (req,res,next) =>{
+        passport.use(googleAuthen);
     }
 
 
