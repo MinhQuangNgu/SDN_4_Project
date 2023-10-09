@@ -3,33 +3,37 @@ import jwt from 'jsonwebtoken'
 
 function generateAccessToken(username) {
   // tạo access token key = header + payload + secretkey
-  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '60s' });
 };
 
 function authenticateToken(req, res, next) {
   // url: '/user/token',
-  if (req.url == "/user/token" || req.url == '/user') {
+  if (req.url == "/user/login" || req.url == '/user/register' || req.url == '/user/forgot-password') {
     next();
   }
 
-else{
+  else {
 
-  const authHeader = req.headers['authorization'];
-  
-  const token = authHeader && authHeader.split(' ')[1]
+    const authHeader = req.headers['authorization'];
 
-  if (token == null) return res.sendStatus(401)
+    const token = authHeader && authHeader.split(' ')[1]
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    console.log(err)
+    if (token == null) return res.sendStatus(401)
 
-    if (err) return res.sendStatus(403)
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+      console.log(err)
 
-    req.user = user
+      if (err) return res.status(200).json({
+        data: {
+          success: false,
+        }
+      });
 
-    next()
-  })
-}
+      req.user = user
+
+      next()
+    })
+  }
 }
 
 // module.exports = { generateAccessToken: generateAccessToken, authenticateToken: authenticateToken }
