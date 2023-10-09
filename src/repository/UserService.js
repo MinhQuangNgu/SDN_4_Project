@@ -57,6 +57,33 @@ class RecipeController {
             return err;
         }
     }
+    // Change = async (req, res, next) => {
+
+    //     // kiểm tra giá trị truyền đến nhé
+    //     const { password,id } = req.body;
+    //     try {
+    //         console.log(id);
+    //         const userUpdate = await userModel.findById(id).exec();
+    //         if (!userUpdate) {
+    //             return {
+    //                 data: {
+    //                     statusCode: 400,
+    //                     success: false,
+    //                     error: "User not found"
+    //                 }
+    //             };
+    //         }
+    //         await userModel.findOneAndUpdate({ _id: id }, req.body);
+    //         return {
+    //             data: {
+    //                 statusCode: 200,
+    //                 success: true,
+    //             }
+    //         };
+    //     } catch (err) {
+    //         return err;
+    //     }
+    // }
 
     Create = async (req, res, next) => {
 
@@ -77,7 +104,7 @@ class RecipeController {
             }
 
             const userModelFind = await userModel.create(req.body)
-            const token = generateAccessToken({ _id: userModelFind['_id'] });
+            const token = generateAccessToken({ _id: userModelFind['_id'],role: userModelFind["role"]  });
             return {
                 data: {
                     statusCode: 200,
@@ -97,7 +124,7 @@ class RecipeController {
         const { email, password } = req.body;
 
         try {
-            const userModelFind = await userModel.findOne({ email: email, password: password }).exec();
+            const userModelFind = await userModel.findOne({ email: email, password: password }, {_id: 0, password: 0}).exec();
             if(!userModelFind){
                return {
                     data: {
@@ -107,7 +134,7 @@ class RecipeController {
                     }
                 };
             }
-            const token = generateAccessToken({ _id: userModelFind['_id'] });
+            const token = generateAccessToken({ _id: userModelFind['_id'],role: userModelFind["role"] });
             return {
                 data: {
                     statusCode: 200,
