@@ -168,12 +168,12 @@ class UserController {
             return res.status(200).json({
                 user: {
                     ...user._doc,
+                    your_following:requestUser?.followings,
                     owner: req.user._id == id
                 }
             });
         }
         catch (err) {
-            console.log(err)
             return res.status(500).json({ message: err.toString() });
         }
     }
