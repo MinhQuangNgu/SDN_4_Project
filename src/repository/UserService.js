@@ -124,7 +124,7 @@ class RecipeController {
         const { email, password } = req.body;
 
         try {
-            const userModelFind = await userModel.findOne({ email: email, password: password }, {_id: 0, password: 0}).exec();
+            const userModelFind = await userModel.findOne({ email: email, password: password }, { password: 0}).exec();
             if(!userModelFind){
                return {
                     data: {
