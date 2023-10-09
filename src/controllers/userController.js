@@ -181,7 +181,7 @@ class UserController {
     async updateUserDetails(req, res) {
         try {
             const { id } = req.params;
-            const requestUser = await User.findById(req.user.id);
+            const requestUser = await User.findById(req.user._id);
             if (!requestUser) {
                 return res.status(404).json({ message: "User not found" });
             }
@@ -200,7 +200,7 @@ class UserController {
                 }
                 await User.findByIdAndUpdate(id, data);
             }
-            return res.status(200).json({ message: "Update successful" });
+            return res.status(200).json({ message: "Update successfully" });
         }
         catch (err) {
             return res.status(500).json({ message: err.toString() });
@@ -210,25 +210,25 @@ class UserController {
     async userChiefFollow(req, res) {
         try {
             const { id } = req.params;
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.user._id);
             const follower = await User.findById(id);
             if (!user || !follower) {
                 return res.status(404).json({ message: "User not found" });
             }
             const isAlreadyFollowing = user.followings.includes(id);
             if (isAlreadyFollowing) {
-                await User.findByIdAndUpdate(req.user.id, {
+                await User.findByIdAndUpdate(req.user._id, {
                     $pull: { followings: id }
                 });
                 await User.findByIdAndUpdate(id, {
-                    $pull: { followers: req.user.id }
+                    $pull: { followers: req.user._id }
                 });
             } else {
-                await User.findByIdAndUpdate(req.user.id, {
+                await User.findByIdAndUpdate(req.user._id, {
                     $addToSet: { followings: id }
                 });
                 await User.findByIdAndUpdate(id, {
-                    $addToSet: { followers: req.user.id }
+                    $addToSet: { followers: req.user._id }
                 });
             }
             const action = isAlreadyFollowing ? "Unfollow" : "Follow";
@@ -242,21 +242,21 @@ class UserController {
     async userRecipeFollow(req, res) {
         try {
             const { id } = req.params;
-            const user = await User.findById(req.user.id);
+            const user = await User.findById(req.user._id);
             const recipe = await Recipe.findById(id);
             if (!user || !recipe) {
                 return res.status(404).json({ message: "User or recipe not found" });
             }
             const isAlreadyFollowing = user.favoriteRecipes.includes(id);
             if (isAlreadyFollowing) {
-                await User.findByIdAndUpdate(req.user.id, {
+                await User.findByIdAndUpdate(req.user._id, {
                     $pull: { favoriteRecipes: id }
                 });
                 await Recipe.findByIdAndUpdate(id, {
-                    $pull: { favorites: req.user.id }
+                    $pull: { favorites: req.user._id }
                 });
             } else {
-                await User.findByIdAndUpdate(req.user.id, {
+                await User.findByIdAndUpdate(req.user._id, {
                     $addToSet: { favoriteRecipes: id }
                 });
                 await Recipe.findByIdAndUpdate(id, {
