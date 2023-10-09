@@ -3,8 +3,8 @@ import recipeModel from "../models/recipeModel.js";
 class RecipeServices {
     getAllRecipe = async (req, res, next) => {
         try {
-            const allReceip = await recipeModel.find({});
-            return allReceip;
+            const allRecipe = await recipeModel.find({});
+            return allRecipe;
         } catch (err) {
             return err;
         }
