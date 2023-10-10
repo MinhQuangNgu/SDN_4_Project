@@ -87,6 +87,7 @@ class AdminController {
             return res.status(500).json({ message: err.toString() });
         }
     }
+
 }
 
 export default new AdminController;
