@@ -1,15 +1,15 @@
 import RecipeServices from "../repository/RecipeServices.js";
 
 class RecipeController {
-    getAllReceipt = async (req, res, next) => {
-        const allReceip = await RecipeServices.getAllRecipe(req, res, next)
+    getAllrecipe = async (req, res, next) => {
+        const allRecipe = await RecipeServices.getAllRecipe(req, res, next)
         return res.send({
             status: 200,
-            allReceip
+            allRecipe
         })
     }
 
-    getReceiptByID = async (req, res, next) => {
+    getrecipeByID = async (req, res, next) => {
         const recipe = await RecipeServices.findByID(req, res, next);
         return res.send({
             status: 200,
