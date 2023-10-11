@@ -1,5 +1,5 @@
 import recipeModel from "../models/recipeModel.js";
-
+import userModel from "../models/userModel.js";
 class RecipeServices {
     getAllRecipe = async (req, res, next) => {
         try {
@@ -27,7 +27,8 @@ class RecipeServices {
     Create = async (req, res, next) => {
         try {
             const { name, introduction, recipes, tags } = req.body
-            return recipeModel.create({ name, introduction, recipes, tags })
+            const userId = req.user._id;
+            return recipeModel.create({ name, introduction, recipes, tags, owner: userId });
         } catch (error) {
             return error;
         }

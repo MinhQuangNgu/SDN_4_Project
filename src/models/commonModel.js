@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
 const commonModel = new mongoose.Schema({
-    k:{
+    key: {
+        type: String,
+    },
+    label:{
         type:String,
     },
-    v:{
+    value:{
         type:String
     }
 },{
