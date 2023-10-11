@@ -1,5 +1,7 @@
 import recipeModel from "../models/recipeModel.js";
+import commonModel from "../models/commonModel.js";
 import RecipeServices from "../repository/RecipeServices.js";
+import commonServices from "../repository/commonServices.js";
 
 class RecipeController {
     getAllrecipe = async (req, res, next) => {
@@ -84,12 +86,12 @@ class RecipeController {
                 item.tags.forEach(infor => {
                     if (infor.k === 'country') {
                         countries.push(infor.v);
-                        
+
                     }
                 })
                 // 
             })
-            
+
             const finalCountry = new Set(countries);
             console.log(finalCountry)
             return res.status(200).json({
@@ -100,6 +102,29 @@ class RecipeController {
             return res.status(500).json({ message: err.toString() });
         }
     }
+
+    getAllCommon = async (req, res) => {
+        const allCommon = await commonServices.getAllCommon(req, res)
+        const {label,value} = allCommon;
+        const object = {label,value}
+        try {
+            return res.send(allCommon)
+        } catch (error) {
+            res.send({ error: error.message });
+        }
+        
+    }
+
+    createCommon = async (req, res) => {
+        const allCommon = await commonServices.createCommon(req, res)
+        try {
+            return res.send(allCommon)
+        } catch (error) {
+            res.send({ error: error.message });
+        }
+        
+    }
+
 }
 
 export default new RecipeController;

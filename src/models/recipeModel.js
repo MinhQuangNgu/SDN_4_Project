@@ -43,7 +43,12 @@ const recipeModel = new mongoose.Schema({
     tags: {
         type: [],
         default: []
-    },  
+    },
+    status:{
+        type:String,
+        enum:["pending",'active','inactive'],
+        default:"active"
+    }
 
 }, {
     timestamps: true
