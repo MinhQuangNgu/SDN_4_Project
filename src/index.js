@@ -5,7 +5,6 @@ import router from "./routes/index.js";
 import bodyParser from 'body-parser';
 const app = express();
 import { connect } from "mongoose";
-import { authenticateToken } from './authen.js'
 config();
 app.use(express.json());
 
@@ -32,7 +31,6 @@ connect(process.env.DATABASE_URL, {
     });
 const PORT = process.env.PORT || 5000;
 
-app.use(authenticateToken);
 router(app);
 app.listen(PORT, () => {
     console.log("Connected to post 5000");

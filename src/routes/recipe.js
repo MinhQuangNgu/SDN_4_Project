@@ -1,6 +1,13 @@
 import express from 'express'; 
-
+import recipeController from '../controllers/recipeController.js';
+import middlewareController from '../controllers/middlewareController.js';
 const recipeRouter = express.Router();
 
+recipeRouter.get('/',recipeController.getAllrecipe)
+recipeRouter.get('/country',recipeController.getAllCountry)
+recipeRouter.get('/:id',recipeController.getrecipeByID)
+recipeRouter.post('/',middlewareController.verifyToken,recipeController.createRecipe)
+recipeRouter.put('/:id',recipeController.updateByID)
+recipeRouter.delete('/:id',recipeController.deleteByID)
 
 export default recipeRouter;

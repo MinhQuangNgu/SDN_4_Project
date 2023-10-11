@@ -6,13 +6,15 @@ import UserController from '../controllers/userController.js'
 
 userRouter.get('/', UserController.getAll);
 userRouter.get('/:id', UserController.getUserID);
-userRouter.post('/', UserController.postUser );
-userRouter.post('/token', UserController.CreateToken);
+userRouter.post('/forgot-password', UserController.forgotPassword);
+// userRouter.put('/change-password', UserController.changePassword);
+userRouter.post('/register', UserController.postUser );
+userRouter.post('/login', UserController.CreateToken);
 userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
 
 
-userRouter.get('/:id',middlewareController.verifyToken,userController.getUserDetail);
+userRouter.get('/profile/:id',middlewareController.verifyToken,userController.getUserDetail);
 userRouter.post('/update/:id',middlewareController.verifyToken,userController.updateUserDetails);
 userRouter.post('/f_m/:id',middlewareController.verifyToken,userController.userChiefFollow);
 userRouter.post('/c_m/:id',middlewareController.verifyToken,userController.userRecipeFollow);

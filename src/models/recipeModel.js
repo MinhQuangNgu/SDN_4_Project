@@ -43,7 +43,7 @@ const recipeModel = new mongoose.Schema({
     tags: {
         type: [],
         default: []
-    }
+    },  
 
 }, {
     timestamps: true
