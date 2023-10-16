@@ -163,7 +163,7 @@ class UserController {
             }
             const user = await User.findById(id).populate("ownerRecipes").populate("favoriteRecipes").populate({
                 path: "followings",
-                select: "_id name"
+                select: "_id name tags followers ownerRecipes"
             }).select(excluded);
             return res.status(200).json({
                 user: {
