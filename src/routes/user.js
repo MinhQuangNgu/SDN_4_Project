@@ -15,7 +15,7 @@ userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
 
 
-userRouter.get('/:id',middlewareController.verifyToken,userController.getUserDetail);
+userRouter.get('/profile/:id',middlewareController.verifyToken,userController.getUserDetail);
 userRouter.post('/update/:id',middlewareController.verifyToken,userController.updateUserDetails);
 userRouter.post('/f_m/:id',middlewareController.verifyToken,userController.userChiefFollow);
 userRouter.post('/c_m/:id',middlewareController.verifyToken,userController.userRecipeFollow);

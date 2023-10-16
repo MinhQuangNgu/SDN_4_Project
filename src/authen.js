@@ -8,7 +8,7 @@ config();
 
 function generateAccessToken(username, check) {
   // tạo access token key = header + payload + secretkey
-  const token = jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '1000s' });
+  const token = jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days ' });
   if (check != 2) {
     return  token; 
   }
@@ -17,6 +17,7 @@ function generateAccessToken(username, check) {
   });
 
   return { token: token, refreshToken: refreshToken };
+  // return jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days' });
 };
 
 function authenticateToken(req, res, next) {
@@ -33,7 +34,7 @@ function authenticateToken(req, res, next) {
 
     if (token == null) return res.sendStatus(401)
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, process.env.ACCESS_KEY, (err, user) => {
       console.log(err)
 
       if (err) return res.status(200).json({
