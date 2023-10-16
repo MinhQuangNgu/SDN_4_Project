@@ -8,19 +8,21 @@ config();
 
 function generateAccessToken(username, check) {
   // tạo access token key = header + payload + secretkey
-  const token = jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days ' });
+  const token = jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days' });
   if (check != 2) {
-    return  token; 
+    return token;
   }
-  const refreshToken = jwt.sign(username, process.env.REFRESH_KEY, {
-    expiresIn: process.env.refreshTokenLife
-  });
+  const refreshToken = jwt.sign(username, process.env.REFRESH_KEY,
+    { expiresIn: '200 days' }
+  );
 
   return { token: token, refreshToken: refreshToken };
   // return jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '100 days' });
 };
 
 function authenticateToken(req, res, next) {
+  console.log("day là req");
+  console.log(req);
   // url: '/user/token',
   if (req.url = "/user" || req.url == "/user/login" || req.url == '/user/register' || req.url == '/user/forgot-password' || req.url == '/user/register/google') {
     next();

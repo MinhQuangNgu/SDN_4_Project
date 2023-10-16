@@ -8,17 +8,17 @@ import UserController from '../controllers/userController.js'
 userRouter.get('/', UserController.getAll);
 userRouter.get('/:id', UserController.getUserID);
 userRouter.post('/forgot-password', UserController.forgotPassword);
-userRouter.post('/register', UserController.postUser );
-userRouter.post('/login', UserController.CreateToken);
-userRouter.post('/refreshToken',UserController.RefreshToken )
+userRouter.post('/register', UserController.postUser);
+userRouter.post('/login', middlewareController.verifyToken, UserController.CreateToken);
+userRouter.post('/refreshToken', UserController.RefreshToken)
 userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
 
 
-userRouter.get('/profile/:id',middlewareController.verifyToken,userController.getUserDetail);
-userRouter.post('/update/:id',middlewareController.verifyToken,userController.updateUserDetails);
-userRouter.post('/f_m/:id',middlewareController.verifyToken,userController.userChiefFollow);
-userRouter.post('/c_m/:id',middlewareController.verifyToken,userController.userRecipeFollow);
+userRouter.get('/profile/:id', middlewareController.verifyToken, userController.getUserDetail);
+userRouter.post('/update/:id', middlewareController.verifyToken, userController.updateUserDetails);
+userRouter.post('/f_m/:id', middlewareController.verifyToken, userController.userChiefFollow);
+userRouter.post('/c_m/:id', middlewareController.verifyToken, userController.userRecipeFollow);
 
 
 export default userRouter;
