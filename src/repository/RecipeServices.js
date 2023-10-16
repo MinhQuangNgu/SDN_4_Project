@@ -86,6 +86,10 @@ class RecipeServices {
             return err;
         }
     }
+    search = async (condition) => {
+        const recipes = await recipeModel.find(condition);
+        return recipes;
+      }
 
 }
 

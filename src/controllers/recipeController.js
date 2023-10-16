@@ -124,6 +124,33 @@ class RecipeController {
         }
         
     }
+    search = async (req, res) => {
+        const { name, type, country } = req.query;
+    
+        const condition = {};
+    
+        if (name) {
+          condition.name = { $regex: new RegExp(name, "i") };
+        }
+    
+        const typeCondition = {};
+        if (type) {
+          typeCondition["tags.v"] = { $in: [type] };
+        }
+    
+        const countryCondition = {};
+        if (country) {
+          countryCondition["tags.v"] = { $in: [country] };
+        }
+    
+        const combinedConditions = {
+          $and: [condition, typeCondition, countryCondition],
+        };
+    
+        const recipes = await RecipeServices.search(combinedConditions);
+    
+        res.json(recipes);
+      };
 
 }
 
