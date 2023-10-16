@@ -6,9 +6,17 @@ import User from '../src/models/userModel.js'
 config();
 // import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from process.env;
 
-function generateAccessToken(username) {
+function generateAccessToken(username, check) {
   // tạo access token key = header + payload + secretkey
-  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '60s' });
+  const token = jwt.sign(username, process.env.ACCESS_KEY, { expiresIn: '1000s' });
+  if (check != 2) {
+    return  token; 
+  }
+  const refreshToken = jwt.sign(username, process.env.REFRESH_KEY, {
+    expiresIn: process.env.refreshTokenLife
+  });
+
+  return { token: token, refreshToken: refreshToken };
 };
 
 function authenticateToken(req, res, next) {
@@ -31,11 +39,11 @@ function authenticateToken(req, res, next) {
       if (err) return res.status(200).json({
         data: {
           success: false,
+          data: "Unauthorized access"
+
         }
       });
-
       req.user = user
-
       next()
     })
   }
@@ -103,7 +111,7 @@ const facebookAuthen = new FacebookStrategy({ // FacebookStrategy là strategy i
         const body = {
           name: displayName,
           facebook_id: id,
-          email:"ab1__234@gmail.com",
+          email: "ab1__234@gmail.com",
           role: "user",
           provider: provider,
           password: "password",

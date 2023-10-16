@@ -47,9 +47,9 @@ class UserController {
                 from: 'khanhddq13.11.2002@gmail.com',
                 to: email,
                 subject: 'Reset Your password',
-                
+
                 html: `<h1>You click link below to change password</h1><a href="http://localhost:3000/change-password/${user['_id']}/${token}">Reset Password</a>`
-            
+
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
@@ -121,7 +121,7 @@ class UserController {
     }
 
     // changePassword = async (req, res, next) => {
-      
+
     //     try {
     //         const userUpdate = await UserService.Change(req, res, next);
     //         if (!userUpdate) {
@@ -152,6 +152,24 @@ class UserController {
         return res.status(200).send({
             data: user.data
         })
+    }
+
+    RefreshToken = async (req, res, next) => {
+        // try {
+          return await UserService.Refresh(req, res, next);
+          
+            
+        //     if (user.data.statusCode !== 200) {
+        //         return res.status(200).send({
+        //             data: user.data
+        //         });
+        //     }
+        //     return res.status(200).send({
+        //         data: user.data
+        //     })
+        // } catch (error) {
+            
+        // }
     }
     async getUserDetail(req, res) {
         try {

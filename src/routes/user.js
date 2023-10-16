@@ -10,7 +10,7 @@ userRouter.get('/:id', UserController.getUserID);
 userRouter.post('/forgot-password', UserController.forgotPassword);
 userRouter.post('/register', UserController.postUser );
 userRouter.post('/login', UserController.CreateToken);
-
+userRouter.post('/refreshToken',UserController.RefreshToken )
 userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
 

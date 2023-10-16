@@ -31,17 +31,17 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: 2 * 60 * 1000 // 10s
+    maxAge: 100 * 60 * 1000 // 10s
   },
 }))
 app.use(cookieParser())
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(googleAuthen);
 passport.use(facebookAuthen)
 passport.serializeUser((user, done) => {
-  // console.log('serial', user);
   done(null, user);
 });
 
@@ -68,11 +68,13 @@ app.get('/user/register/google',
     // Successful authentication, redirect home.
     console.log("req =================================================");
     console.log(req.user);
-    return res.status(200).json({
+    const userData = {
       success: true,
       statusCode: 200,
-      data: req.user
-    })
+      data:encodeURIComponent(JSON.stringify(req.user))
+    };
+    const queryString =(Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
+    res.redirect(`http://localhost:3000?${queryString}`);
   }
 );
 
@@ -81,9 +83,9 @@ app.get('/login/facebook', (req, res, next) => { console.log(0); next() }, passp
 
 
 app.get('/auth/facebook/callback', (req, res, next) => { console.log("callback"); next() },
-  // chỗ này thực hiện ở phần authen
   passport.authenticate('facebook', {
     failureRedirect: (req, res, next) => {
+      res.redirect('http://localhost:3000/')
       return res.status(200).json({
         success: false,
         statusCode: 400,
@@ -95,11 +97,14 @@ app.get('/auth/facebook/callback', (req, res, next) => { console.log("callback")
     // Successful authentication, redirect home.
     console.log("req =================================================");
     console.log(req.user);
-    return res.status(200).json({
+    const userData = {
       success: true,
       statusCode: 200,
-      data: req.user
-    })
+      data:encodeURIComponent(JSON.stringify(req.user))
+    };
+
+    const queryString =(Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
+    res.redirect(`http://localhost:3000?${queryString}`);
   });
 
 //==========
