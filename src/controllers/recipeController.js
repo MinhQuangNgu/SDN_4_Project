@@ -20,6 +20,17 @@ class RecipeController {
         })
     }
 
+
+
+
+    getRecipeByOwner = async (req, res, next) => {
+        const recipe = await RecipeServices.findByOwner(req, res, next);
+        return res.send({
+            status: 200,
+            recipe
+        })
+    }
+
     createRecipe = async (req, res, next) => {
         const newRecipe = await RecipeServices.Create(req, res, next);
         if (!newRecipe) {
