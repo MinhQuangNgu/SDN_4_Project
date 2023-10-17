@@ -28,7 +28,7 @@ class RecipeServices {
             return next();
         }
         try {
-            const recipe = await recipeModel.findById(id)
+            const recipe = await recipeModel.findById(id).populate("owner")
             return recipe;
         } catch (err) {
             return err;

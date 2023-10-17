@@ -9,8 +9,8 @@ function router(app){
     app.use('/recipe',recipe);
     app.use('/comment',comment);
     app.use('/admin',admin);
-    app.get("/recipe/search", recipeController.search);
-    app.get("/recipe/:id", recipeController.getrecipeByID);
+    // app.get("/recipe/search", recipeController.search);
+    // app.get("/recipe/:id", recipeController.getrecipeByID);
 }
 
 export default router;

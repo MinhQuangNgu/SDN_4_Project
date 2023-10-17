@@ -9,7 +9,7 @@ recipeRouter.get('/country',recipeController.getAllCountry)
 recipeRouter.get('/common',recipeController.getAllCommon)
 recipeRouter.post('/common',recipeController.createCommon)
 
-// recipeRouter.get('/:id',recipeController.getrecipeByID)
+recipeRouter.get('/:id',recipeController.getrecipeByID)
 recipeRouter.post('/',middlewareController.verifyToken,recipeController.createRecipe)
 recipeRouter.put('/:id',recipeController.updateByID)
 recipeRouter.delete('/:id',middlewareController.verifyToken,recipeController.deleteByID)
