@@ -11,13 +11,24 @@ class RecipeServices {
 
     }
 
+    findByOwner = async (req, res, next) => {
+        const userId = req.user._id;
+        try {
+            const recipe = await recipeModel.find({ owner: userId });
+            return recipe;
+        } catch (err) {
+            return err;
+        }
+    }
+
+
     findByID = async (req, res, next) => {
         const { id } = req.params;
         if (!id) {
             return next();
         }
         try {
-            const recipe = await recipeModel.findById(id)
+            const recipe = await recipeModel.findById(id).populate("owner")
             return recipe;
         } catch (err) {
             return err;
@@ -28,7 +39,14 @@ class RecipeServices {
         try {
             const { name, introduction, recipes, tags } = req.body
             const userId = req.user._id;
-            return recipeModel.create({ name, introduction, recipes, tags, owner: userId });
+            const create = await recipeModel.create({ name, introduction, recipes, tags, owner: userId });
+            const updateUser = await userModel.findById(userId).then((user) => {
+                user.ownerRecipes.push(create._id);
+                user.save();
+            });
+            return {
+                create, updateUser
+            }
         } catch (error) {
             return error;
         }
@@ -74,7 +92,15 @@ class RecipeServices {
                     }
                 };
             }
+            const userId = req.user._id;
             const result = await recipeModel.findOneAndDelete({ _id: id }, req.body);
+            const updateUser = await userModel.findById(userId).then((user) => {
+                const result = user.ownerRecipes.filter((recipe)=>{
+                    recipe._id != id
+                });
+                user.ownerRecipes = result;
+                user.save();
+            });
             return {
                 data: {
                     statusCode: 200,
@@ -86,6 +112,10 @@ class RecipeServices {
             return err;
         }
     }
+    search = async (condition) => {
+        const recipes = await recipeModel.find(condition);
+        return recipes;
+      }
 
 }
 

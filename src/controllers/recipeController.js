@@ -20,6 +20,17 @@ class RecipeController {
         })
     }
 
+
+
+
+    getRecipeByOwner = async (req, res, next) => {
+        const recipe = await RecipeServices.findByOwner(req, res, next);
+        return res.send({
+            status: 200,
+            recipe
+        })
+    }
+
     createRecipe = async (req, res, next) => {
         const newRecipe = await RecipeServices.Create(req, res, next);
         if (!newRecipe) {
@@ -124,6 +135,33 @@ class RecipeController {
         }
         
     }
+    search = async (req, res) => {
+        const { name, type, country } = req.query;
+    
+        const condition = {};
+    
+        if (name) {
+          condition.name = { $regex: new RegExp(name, "i") };
+        }
+    
+        const typeCondition = {};
+        if (type) {
+          typeCondition["tags.v"] = { $in: [type] };
+        }
+    
+        const countryCondition = {};
+        if (country) {
+          countryCondition["tags.v"] = { $in: [country] };
+        }
+    
+        const combinedConditions = {
+          $and: [condition, typeCondition, countryCondition],
+        };
+    
+        const recipes = await RecipeServices.search(combinedConditions);
+    
+        res.json(recipes);
+      };
 
 }
 
