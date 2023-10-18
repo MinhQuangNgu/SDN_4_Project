@@ -18,6 +18,15 @@ const userModel = new mongoose.Schema({
         enum:['admin','user','chief'],
         default:'user'
     },
+    google_id: {
+        type: Number
+    },
+    facebook_id: {
+        type: Number
+    },
+    provider: {
+        type:String
+    },
     ownerRecipes: {
         type: [
             {

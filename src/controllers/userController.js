@@ -47,9 +47,9 @@ class UserController {
                 from: 'khanhddq13.11.2002@gmail.com',
                 to: email,
                 subject: 'Reset Your password',
-                
+
                 html: `<h1>You click link below to change password</h1><a href="http://localhost:3000/change-password/${user['_id']}/${token}">Reset Password</a>`
-            
+
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
@@ -119,29 +119,52 @@ class UserController {
         }
 
     }
+    blockUser = async (req, res, next) => {
 
-    // changePassword = async (req, res, next) => {
-      
-    //     try {
-    //         const userUpdate = await UserService.Change(req, res, next);
-    //         if (!userUpdate) {
-    //             return res.status(400).json({
-    //                 status: "failed to Update user",
-    //             })
-    //         }
-    //         if (userUpdate.data.statusCode !== 201) {
-    //             return res.status(200).json({
-    //                 data: userUpdate.data
-    //             });
-    //         }
-    //         return res.status(201).json({
-    //             success: true,
-    //         })
-    //     } catch (error) {
+        try {
+            const userUpdate = await UserService.blockUser(req, res, next);
+            if (!userUpdate) {
+                return res.status(400).json({
+                    status: "failed to Update user",
+                })
+            }
+            if (userUpdate.data.statusCode !== 201) {
+                return res.status(200).json({
+                    data: userUpdate.data
+                });
+            }
+            return res.status(201).json({
+                success: true,
+            })
+        } catch (error) {
 
-    //     }
+        }
 
-    // }
+    }
+    openUser = async (req, res, next) => {
+
+        try {
+            const userUpdate = await UserService.openUser(req, res, next);
+            if (!userUpdate) {
+                return res.status(400).json({
+                    status: "failed to Update user",
+                })
+            }
+            if (userUpdate.data.statusCode !== 201) {
+                return res.status(200).json({
+                    data: userUpdate.data
+                });
+            }
+            return res.status(201).json({
+                success: true,
+            })
+        } catch (error) {
+
+        }
+
+    }
+
+
     CreateToken = async (req, res, next) => {
         const user = await UserService.Login(req, res, next);
         if (user.data.statusCode !== 200) {
@@ -152,6 +175,11 @@ class UserController {
         return res.status(200).send({
             data: user.data
         })
+    }
+
+    RefreshToken = async (req, res, next) => {
+        // try {
+        return await UserService.Refresh(req, res, next);
     }
     async getUserDetail(req, res) {
         try {
@@ -168,7 +196,7 @@ class UserController {
             return res.status(200).json({
                 user: {
                     ...user._doc,
-                    your_following:requestUser?.followings,
+                    your_following: requestUser?.followings,
                     owner: req.user._id == id
                 }
             });

@@ -1,14 +1,18 @@
 
+import jwt from 'jsonwebtoken'
+import { config } from "dotenv";
 import userModel from "../models/userModel.js";
-import { generateAccessToken } from "../authen.js";
-
+import { generateAccessToken, googleAuthen } from "../authen.js";
+import passport from 'passport'
+import recipeModel from "../models/recipeModel.js";
+import cookieParser from "cookie-parser";
 
 class RecipeController {
 
     findAll = async (req, res, next) => {
         try {
             const userModels = await userModel.find({});
-           
+
             return userModels;
         } catch (err) {
             return err;
@@ -31,11 +35,9 @@ class RecipeController {
     }
 
     Update = async (req, res, next) => {
-
-        // kiểm tra giá trị truyền đến nhé
         const { id } = req.params;
         try {
-            console.log(id);
+
             const userUpdate = await userModel.findById(id).exec();
             if (!userUpdate) {
                 return {
@@ -57,33 +59,60 @@ class RecipeController {
             return err;
         }
     }
-    // Change = async (req, res, next) => {
 
-    //     // kiểm tra giá trị truyền đến nhé
-    //     const { password,id } = req.body;
-    //     try {
-    //         console.log(id);
-    //         const userUpdate = await userModel.findById(id).exec();
-    //         if (!userUpdate) {
-    //             return {
-    //                 data: {
-    //                     statusCode: 400,
-    //                     success: false,
-    //                     error: "User not found"
-    //                 }
-    //             };
-    //         }
-    //         await userModel.findOneAndUpdate({ _id: id }, req.body);
-    //         return {
-    //             data: {
-    //                 statusCode: 200,
-    //                 success: true,
-    //             }
-    //         };
-    //     } catch (err) {
-    //         return err;
-    //     }
-    // }
+    blockUser = async (req, res, next) => {
+        const { id } = req.params;
+        try {
+
+            const userUpdate = await userModel.findById(id).exec();
+            if (!userUpdate) {
+                return {
+                    data: {
+                        statusCode: 400,
+                        success: false,
+                        error: "User not found"
+                    }
+                };
+            }
+            await userModel.findOneAndUpdate({ _id: id }, { status: "locked" });
+            await recipeModel.updateMany({ owner: id }, { status: "inactive" })
+            return {
+                data: {
+                    statusCode: 200,
+                    success: true,
+                }
+            };
+        } catch (err) {
+            return err;
+        }
+    }
+    openUser = async (req, res, next) => {
+        const { id } = req.params;
+        try {
+
+            const userUpdate = await userModel.findById(id).exec();
+            if (!userUpdate) {
+                return {
+                    data: {
+                        statusCode: 400,
+                        success: false,
+                        error: "User not found"
+                    }
+                };
+            }
+            await userModel.findOneAndUpdate({ _id: id }, { status: "opened" });
+            await recipeModel.updateMany({ owner: id }, { status: "opened" })
+            return {
+                data: {
+                    statusCode: 200,
+                    success: true,
+                }
+            };
+        } catch (err) {
+            return err;
+        }
+    }
+
 
     Create = async (req, res, next) => {
 
@@ -104,13 +133,19 @@ class RecipeController {
             }
 
             const userModelFind = await userModel.create(req.body)
-            const token = generateAccessToken({ _id: userModelFind['_id'],role: userModelFind["role"]  });
+            const { token, refreshToken } = generateAccessToken({ _id: userModelFind['_id'], role: userModelFind["role"] }, 2);
+
+            const cookieRefresh = await cookieParser.signedCookie(refreshToken, process.env.REFRESH_KEY)
+            res.cookie('refresh', cookieRefresh);
+            const cookieValue = req.cookies['refresh'];
+
             return {
                 data: {
                     statusCode: 200,
                     success: true,
                     data: userModelFind,
-                    token: token
+                    token: token,
+
                 }
             };
 
@@ -121,32 +156,86 @@ class RecipeController {
     }
 
     Login = async (req, res, next) => {
-        const { email, password } = req.body;
-
+        // const check = { $or: [{ status: "pending" }, { status: "opened" }] };
         try {
-            const userModelFind = await userModel.findOne({ email: email, password: password }, { password: 0}).exec();
-            if(!userModelFind){
-               return {
+            const userModelFind = await userModel.findOne({ ...req.body }, { password: 0 }).exec();
+            if (!userModelFind) {
+                return {
                     data: {
                         statusCode: 400,
                         success: false,
                         data: "Kiểm tra lại tên hoặc mật khẩu"
                     }
                 };
+            };
+            if (userModelFind['status'] == 'locked') {
+                return {
+                    data: {
+                        statusCode: 400,
+                        success: false,
+                        data: "Bạn đã bị blocked."
+                    }
+                };
             }
-            const token = generateAccessToken({ _id: userModelFind['_id'],role: userModelFind["role"] });
-            return {
+
+            const { token, refreshToken } = await generateAccessToken({ _id: userModelFind['_id'], role: userModelFind["role"] }, 2);
+            const result = {
                 data: {
                     statusCode: 200,
                     success: true,
                     data: userModelFind,
-                    token: token
+                    token: token,
+                    refreshToken: refreshToken
                 }
             };
+            const cookieRefresh = await cookieParser.signedCookie(refreshToken, process.env.REFRESH_KEY)
+            res.cookie('refresh', cookieRefresh);
+            const cookieValue = req.cookies['refresh'];
+            return result;
         } catch (err) {
             return err;
         }
 
+    }
+
+    Refresh = async (req, res, next) => {
+        const { refreshToken } = req.body;
+        // Kiểm tra Refresh token có được gửi kèm và mã này có tồn tại trên hệ thống hay không
+        const cookieValue = req.cookies['refresh'];
+        let token;
+        if ((refreshToken) && (refreshToken == cookieValue)) {
+            // Kiểm tra mã Refresh token
+            jwt.verify(cookieValue, process.env.REFRESH_KEY, (err, user) => {
+                if (err) {
+
+                    return res.status(400).json({
+                        statusCode: 400,
+                        success: false,
+                        data: "Invalid Refresh Token"
+
+                    });
+                }
+                // Tạo mới mã token và trả lại cho user
+                token = generateAccessToken({ _id: user['_id'], role: user["role"] }, 1);
+
+                return res.status(400).json(
+                    {
+                        statusCode: 200,
+                        success: true,
+                        token: token,
+                    }
+                )
+            })
+        } else {
+
+            return {
+                data: {
+                    statusCode: 400,
+                    success: false,
+                    data: "Invalid Request"
+                }
+            }
+        }
     }
 
 
