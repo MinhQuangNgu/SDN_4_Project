@@ -41,6 +41,7 @@ class RecipeServices {
             const userId = req.user._id;
             const create = await recipeModel.create({ name, introduction, recipes, tags, owner: userId });
             const updateUser = await userModel.findById(userId).then((user) => {
+                user.role ="chef";
                 user.ownerRecipes.push(create._id);
                 user.save();
             });
@@ -96,6 +97,9 @@ class RecipeServices {
             await userModel.findById(userId).then((user) => {
                 const result = user.ownerRecipes.filter((recipe) => JSON.stringify(recipe._id) !== JSON.stringify(id));
                 user.ownerRecipes = result;
+                if(user.ownerRecipes.length == 0) {
+                    user.role = "user";
+                }
                 user.save();
             });
             const result = await recipeModel.findOneAndDelete({ _id: id }, req.body);
