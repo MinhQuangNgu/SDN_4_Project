@@ -119,11 +119,54 @@ class UserController {
         }
 
     }
+    blockUser = async (req, res, next) => {
+
+        try {
+            const userUpdate = await UserService.blockUser(req, res, next);
+            if (!userUpdate) {
+                return res.status(400).json({
+                    status: "failed to Update user",
+                })
+            }
+            if (userUpdate.data.statusCode !== 201) {
+                return res.status(200).json({
+                    data: userUpdate.data
+                });
+            }
+            return res.status(201).json({
+                success: true,
+            })
+        } catch (error) {
+
+        }
+
+    }
+    openUser = async (req, res, next) => {
+
+        try {
+            const userUpdate = await UserService.openUser(req, res, next);
+            if (!userUpdate) {
+                return res.status(400).json({
+                    status: "failed to Update user",
+                })
+            }
+            if (userUpdate.data.statusCode !== 201) {
+                return res.status(200).json({
+                    data: userUpdate.data
+                });
+            }
+            return res.status(201).json({
+                success: true,
+            })
+        } catch (error) {
+
+        }
+
+    }
 
 
     CreateToken = async (req, res, next) => {
         const user = await UserService.Login(req, res, next);
-        console.log(user);
         if (user.data.statusCode !== 200) {
             return res.status(200).send({
                 data: user.data
@@ -137,19 +180,6 @@ class UserController {
     RefreshToken = async (req, res, next) => {
         // try {
         return await UserService.Refresh(req, res, next);
-
-
-        //     if (user.data.statusCode !== 200) {
-        //         return res.status(200).send({
-        //             data: user.data
-        //         });
-        //     }
-        //     return res.status(200).send({
-        //         data: user.data
-        //     })
-        // } catch (error) {
-
-        // }
     }
     async getUserDetail(req, res) {
         try {

@@ -46,15 +46,16 @@ class AdminController {
             const totalRecipe = await Recipe.countDocuments();
             const totalChief = await User.countDocuments({ role: "chief" });
 
-            const newUser = await User.find().sort({ createdAt: -1 }).limit(5);
+            const newUser = await User.find({}).sort({ createdAt: 1 }).limit(5);
+            console.log("day là new User " + newUser);
             const newRecipe = await Recipe.find().sort({ createdAt: -1 }).limit(5);
 
             const currentMonthStart = moment().startOf('month');
             const currentMonthEnd = moment().endOf('month');
-            const daysInMonth = moment().daysInMonth(); 
+            const daysInMonth = moment().daysInMonth();
 
-            const newUserCounts = Array.from({ length: daysInMonth }, () => 0); 
-            const newRecipeCounts = Array.from({ length: daysInMonth }, () => 0); 
+            const newUserCounts = Array.from({ length: daysInMonth }, () => 0);
+            const newRecipeCounts = Array.from({ length: daysInMonth }, () => 0);
 
             const newUsers = await User.find({
                 createdAt: { $gte: currentMonthStart, $lte: currentMonthEnd }
@@ -65,13 +66,13 @@ class AdminController {
             });
 
             newUsers.forEach(user => {
-                const day = moment(user.createdAt).date(); 
-                newUserCounts[day - 1]++; 
+                const day = moment(user.createdAt).date();
+                newUserCounts[day - 1]++;
             });
 
             newRecipes.forEach(recipe => {
-                const day = moment(recipe.createdAt).date(); 
-                newRecipeCounts[day - 1]++; 
+                const day = moment(recipe.createdAt).date();
+                newRecipeCounts[day - 1]++;
             });
 
             return res.status(200).json({

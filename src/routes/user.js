@@ -9,10 +9,12 @@ userRouter.get('/', UserController.getAll);
 userRouter.get('/:id', UserController.getUserID);
 userRouter.post('/forgot-password', UserController.forgotPassword);
 userRouter.post('/register', UserController.postUser);
-userRouter.post('/login', middlewareController.verifyToken, UserController.CreateToken);
+userRouter.post('/login', UserController.CreateToken);
 userRouter.post('/refreshToken', UserController.RefreshToken)
 userRouter.delete('/', UserController.deleteUser);
 userRouter.put('/:id', UserController.updateUser);
+userRouter.put('/block/:id', UserController.blockUser);
+userRouter.put('/open/:id', UserController.openUser);
 
 
 userRouter.get('/profile/:id', middlewareController.verifyToken, userController.getUserDetail);
