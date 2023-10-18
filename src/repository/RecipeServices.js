@@ -41,7 +41,7 @@ class RecipeServices {
             const userId = req.user._id;
             const create = await recipeModel.create({ name, introduction, recipes, tags, owner: userId });
             const updateUser = await userModel.findById(userId).then((user) => {
-                user.role ="chef";
+                user.role ="chief";
                 user.ownerRecipes.push(create._id);
                 user.save();
             });
