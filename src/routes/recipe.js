@@ -3,6 +3,8 @@ import recipeController from '../controllers/recipeController.js';
 import middlewareController from '../controllers/middlewareController.js';
 const recipeRouter = express.Router();
 
+
+recipeRouter.get("/search", recipeController.search);
 recipeRouter.get('/myrecipe',middlewareController.verifyToken,recipeController.getRecipeByOwner)
 recipeRouter.get('/',recipeController.getAllrecipe)
 recipeRouter.get('/country',recipeController.getAllCountry)
