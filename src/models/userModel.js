@@ -70,7 +70,7 @@ const userModel = new mongoose.Schema({
             "pending",
             "opened"
         ],
-        default: "pending"
+        default: "opened"
     },
     tags: {
         type: [{

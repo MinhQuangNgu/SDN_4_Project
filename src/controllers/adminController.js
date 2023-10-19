@@ -6,13 +6,18 @@ class AdminController {
     async getUsers(req, res) {
         try {
             const page = req.query.page || 1;
-            const limit = req.query.limit || 1;
+            const limit = req.query.limit || 10;
             const search = req.query.search || "";
             const sort = req.query.sort || '-createdAt';
             const users = await User.find({
-                $or: [
-                    { name: { $regex: search } },
-                    { email: { $regex: search } }
+                $and: [
+                    {
+                        $or: [
+                            { name: { $regex: search, $options: 'i' } }, // case-insensitive search
+                            { email: { $regex: search, $options: 'i' } }
+                        ]
+                    },
+                    { _id: { $ne: req.user._id } } // exclude the user with the specified _id
                 ]
             }).sort(sort).skip((page - 1) * limit).limit(limit);
             return res.status(200).json({ users: users });
@@ -25,14 +30,14 @@ class AdminController {
     async getRecipes(req, res) {
         try {
             const page = req.query.page || 1;
-            const limit = req.query.limit || 1;
+            const limit = req.query.limit || 10;
             const search = req.query.search || "";
             const sort = req.query.sort || '-createdAt';
             const recipes = await Recipe.find({
                 $or: [
                     { name: { $regex: search } }
                 ]
-            }).sort(sort).skip((page - 1) * limit).limit(limit);
+            }).populate("owner").sort(sort).skip((page - 1) * limit).limit(limit);
             return res.status(200).json({ recipes: recipes });
         }
         catch (err) {
@@ -46,8 +51,7 @@ class AdminController {
             const totalRecipe = await Recipe.countDocuments();
             const totalChief = await User.countDocuments({ role: "chief" });
 
-            const newUser = await User.find({}).sort({ createdAt: 1 }).limit(5);
-            console.log("day là new User " + newUser);
+            const newUser = await User.find();
             const newRecipe = await Recipe.find().sort({ createdAt: -1 }).limit(5);
 
             const currentMonthStart = moment().startOf('month');
@@ -84,6 +88,25 @@ class AdminController {
                 newUserCounts,
                 newRecipeCounts
             });
+        } catch (err) {
+            return res.status(500).json({ message: err.toString() });
+        }
+    }
+
+    async updateRecipeStatus(req,res){
+        try {
+            const {id} = req.params;
+            const recipe = await Recipe.findById(id);
+            if(recipe){
+                let newStatus = 'active';
+                if(recipe.status === 'active'){
+                    newStatus = 'inactive';
+                }
+                await Recipe.findByIdAndUpdate(id,{
+                    status:newStatus
+                })
+            }
+            return res.status(200).json({msg:"Update status successfully!"});
         } catch (err) {
             return res.status(500).json({ message: err.toString() });
         }
