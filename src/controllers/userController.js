@@ -298,6 +298,18 @@ class UserController {
             return res.status(500).json({ message: err.toString() });
         }
     }
+    getTopChief = async (req,res) => {
+        try {
+            const topChief= await UserService.getTopChief(req,req);
+            return res.status(200).send({
+                data: topChief,
+                success:true
+            });
+
+        } catch (error) {
+            return res.status(500).json({ message: error.toString() ,success:false});
+        }
+    }
 }
 
 export default new UserController;

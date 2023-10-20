@@ -162,6 +162,34 @@ class RecipeController {
     
         res.json(recipes);
       };
+      getFavorite = async (req, res) => {
+        try {
+          const recipeFavorite = await RecipeServices.getFavorite(req, res)
+          const size = await recipeModel.find({});
+          return res.status(200).json({
+            data: recipeFavorite,
+            
+            size: size.length,
+            success: true,
+          });
+        } catch (error) {
+          return res.status(500).json({ status: false, error: "Error Occurred" });
+        }
+      };
+      getNew = async (req, res) => {
+        try {
+          const recipeNew = await RecipeServices.getNew(req, res);
+          const size = await recipeModel.find({});
+          return res.status(200).json({
+            data: recipeNew,
+         
+            size: size.length,
+            success: true,
+          });
+        } catch (error) {
+          return res.status(500).json({ status: false, error: "Error Occurred" });
+        }
+      };
 
 }
 

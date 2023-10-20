@@ -119,6 +119,53 @@ class RecipeServices {
         const recipes = await recipeModel.find(condition);
         return recipes;
     }
+    getFavorite = async (req, res, next) => {
+        const { page = 1, limit = 10 } = req.query;
+        
+        const recipes = await recipeModel.aggregate([
+          {
+            $addFields: {
+              favorites_size: { $size: { $ifNull: ["$favorites", []] } },
+            },
+          },
+          { $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users"
+         }},
+          {
+            $sort: { favorites_size: -1 },
+          },
+          { $skip: (page - 1) * limit },
+          { $limit: +limit },
+          
+        ]);
+        return recipes;
+      };
+      getNew = async (req, res, next) => {
+        const { page = 1, limit = 10 } = req.query;
+        const recipes = await recipeModel.aggregate([
+          {
+            $addFields: {
+              favorites_size: { $size: { $ifNull: ["$favorites", []] } },
+            },
+          },
+          { $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "users"
+         }},
+          {
+            $sort: { createdAt: -1 },
+          },
+          { $skip: (page - 1) * limit },
+          { $limit: +limit },
+        
+        ])
+        return recipes;
+      };
 
 }
 
