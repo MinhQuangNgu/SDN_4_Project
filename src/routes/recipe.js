@@ -1,6 +1,7 @@
 import express from 'express'; 
 import recipeController from '../controllers/recipeController.js';
 import middlewareController from '../controllers/middlewareController.js';
+import adminController from '../controllers/adminController.js';
 const recipeRouter = express.Router();
 
 
