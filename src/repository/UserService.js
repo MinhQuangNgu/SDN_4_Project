@@ -237,6 +237,37 @@ class RecipeController {
             }
         }
     }
+    getTopChief = async (req, res, next) => {
+        try {
+            const topChief = await userModel.aggregate([
+                { $match : { role: 'chief'} },
+                { $addFields : { 
+                    followers_size :{
+                        $size :{
+                            $ifNull:[
+                                "$followers",[]
+                            ]
+                        },
+                        
+                },
+                recipe_size :{
+                    $size :{
+                        $ifNull:[
+                            "$ownerRecipes",[]
+                        ]
+                    },
+                    
+                 }}},
+                { $sort: { followers_size : -1} },
+                { $limit : 9}
+            ])
+            return topChief;
+            
+        } catch (error) {
+            return err;
+        }
+        
+    }
 
 
 }
