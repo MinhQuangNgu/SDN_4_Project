@@ -8,10 +8,19 @@ import { authenticateToken, facebookAuthen, googleAuthen } from './authen.js'
 import passport from 'passport'
 import cookieParser from 'cookie-parser';
 import session from 'express-session'
+import { Server } from "socket.io";
+import http from "http";
 
 const { KEY_SESSION } = process.env;
 const app = express();
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+export { io };
 
 config();
 app.use(express.json());
@@ -122,6 +131,6 @@ connect(process.env.DATABASE_URL, {
 const PORT = process.env.PORT || 5000;
 
 router(app);
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log("Connected to post 5000");
 })
