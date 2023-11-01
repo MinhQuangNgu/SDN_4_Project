@@ -288,11 +288,11 @@ class UserController {
                     $addToSet: { favoriteRecipes: id }
                 });
                 await Recipe.findByIdAndUpdate(id, {
-                    $addToSet: { favorites: req.user.id }
+                    $addToSet: { favorites: req.user._id }
                 });
             }
             const action = isAlreadyFollowing ? "Unfollow" : "Follow";
-            return res.status(200).json({ msg: `${action} ${follower.name} successfully!` });
+            return res.status(200).json({ msg: `${action} successfully!` });
         }
         catch (err) {
             return res.status(500).json({ message: err.toString() });

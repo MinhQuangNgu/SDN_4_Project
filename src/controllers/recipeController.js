@@ -179,10 +179,9 @@ class RecipeController {
       getNew = async (req, res) => {
         try {
           const recipeNew = await RecipeServices.getNew(req, res);
-          const size = await recipeModel.find({});
+          const size = await recipeModel.find({}).populate("owner");
           return res.status(200).json({
             data: recipeNew,
-         
             size: size.length,
             success: true,
           });
