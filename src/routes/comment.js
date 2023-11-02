@@ -5,6 +5,8 @@ const commentRouter = express.Router();
 
 commentRouter.post('/',middlewareController.verifyToken,commentController.createComment)
 commentRouter.get('/:recipeId',commentController.getCommentsForRecipe)
+commentRouter.delete('/:commentId', middlewareController.verifyToken, commentController.deleteComment);
+commentRouter.put('/:commentId', middlewareController.verifyToken, commentController.editComment);
 
 
 export default commentRouter;
