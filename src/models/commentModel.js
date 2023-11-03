@@ -5,7 +5,7 @@ const commentModel = new mongoose.Schema({
         type:mongoose.Types.ObjectId,
         ref:"comments"
     },
-    onwer:{
+    owner:{
         type:mongoose.Types.ObjectId,
         ref:"users"
     },
