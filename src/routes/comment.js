@@ -7,6 +7,7 @@ commentRouter.post('/',middlewareController.verifyToken,commentController.create
 commentRouter.get('/:recipeId',commentController.getCommentsForRecipe)
 commentRouter.delete('/:commentId', middlewareController.verifyToken, commentController.deleteComment);
 commentRouter.put('/:commentId', middlewareController.verifyToken, commentController.editComment);
+commentRouter.post('/:commentId/report', middlewareController.verifyToken, commentController.reportComment);
 
 
 export default commentRouter;
