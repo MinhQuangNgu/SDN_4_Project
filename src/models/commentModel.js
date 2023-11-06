@@ -25,6 +25,10 @@ const commentModel = new mongoose.Schema({
             }
         ],
         default:[]
+    },
+    reported: {
+        type: Boolean,
+        default: false,
     }
 },{
     timestamps:true

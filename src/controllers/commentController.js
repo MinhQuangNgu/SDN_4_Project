@@ -93,16 +93,16 @@ class CommentController {
       const { commentId } = req.params;
       const { content } = req.body;
       const userId = req.user._id;
-  
+
       const comment = await commentModel.findById(commentId);
-  
+
       if (!comment) {
         return res.status(404).json({
           success: false,
           error: "Comment not found",
         });
       }
-  
+
       // Verify user's ownership and permissions
       if (comment.owner.toString() !== userId) {
         return res.status(403).json({
@@ -110,13 +110,13 @@ class CommentController {
           error: "Permission denied: User does not own this comment.",
         });
       }
-  
+
       // Update the comment's content
       comment.content = content;
       await comment.save();
-  
+
       io.emit("commentUpdated", comment);
-  
+
       return res.status(200).json({
         success: true,
         message: "Comment updated successfully",
@@ -129,8 +129,45 @@ class CommentController {
       });
     }
   }
-  
-  
+
+  async reportComment(req, res) {
+    try {
+        const { commentId } = req.params;
+
+        const comment = await commentModel.findById(commentId);
+
+        if (!comment) {
+            return res.status(404).json({
+                success: false,
+                error: "Comment not found",
+            });
+        }
+
+        if (comment.reported) {
+            return res.status(400).json({
+                success: false,
+                error: "Comment already reported",
+            });
+        }
+
+        comment.reported = true;
+        await comment.save();
+
+        io.emit("commentReported", comment);
+
+        return res.status(200).json({
+            success: true,
+            message: "Comment reported successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            error: error.message,
+        });
+    }
+}
+
 }
 
 export default new CommentController();
