@@ -10,9 +10,13 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session'
 import { Server } from "socket.io";
 import http from "http";
-
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
 const { KEY_SESSION } = process.env;
 const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -80,9 +84,9 @@ app.get('/user/register/google',
     const userData = {
       success: true,
       statusCode: 200,
-      data:encodeURIComponent(JSON.stringify(req.user))
+      data: encodeURIComponent(JSON.stringify(req.user))
     };
-    const queryString =(Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
+    const queryString = (Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
     res.redirect(`http://localhost:3000?${queryString}`);
   }
 );
@@ -109,10 +113,10 @@ app.get('/auth/facebook/callback', (req, res, next) => { console.log("callback")
     const userData = {
       success: true,
       statusCode: 200,
-      data:encodeURIComponent(JSON.stringify(req.user))
+      data: encodeURIComponent(JSON.stringify(req.user))
     };
 
-    const queryString =(Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
+    const queryString = (Object.keys(userData).map(key => `${key}=${userData[key]}`).join('&'));
     res.redirect(`http://localhost:3000?${queryString}`);
   });
 
