@@ -13,7 +13,7 @@ recipeRouter.get('/common',recipeController.getAllCommon)
 recipeRouter.post('/common',recipeController.createCommon)
 recipeRouter.get('/recipe_favorite', recipeController.getFavorite)
 recipeRouter.get('/recipe_new', recipeController.getNew)
-
+recipeRouter.post('/changestatus/:id',middlewareController.verifyToken,adminController.updateRecipeStatus);
 recipeRouter.get('/:id',recipeController.getrecipeByID)
 recipeRouter.post('/',middlewareController.verifyToken,recipeController.createRecipe)
 recipeRouter.put('/:id',recipeController.updateByID)
